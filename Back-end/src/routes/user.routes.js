@@ -4,6 +4,7 @@ const userController = require("../controllers/user.controller");
 
 // CREATE a new device
 router.post("/create", userController.createNew);
+router.get("/script/:email", userController.generateScript);
 router.get("/", (req, res) => {
   res.send("okoko");
 });

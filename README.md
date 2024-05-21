@@ -297,11 +297,6 @@ void loop() {
 
 ```
 
-## Author
-
-- **Hoàng Bá Thanh (ThanK)**
-- **Email:** hbthanh5802@gmail.com
-
 ## Need Support?
 
 If you encounter any issues during installation or use of the application, please create a new issue in the [Issues](link to issues) section of the project. We will try to assist you as soon as possible.

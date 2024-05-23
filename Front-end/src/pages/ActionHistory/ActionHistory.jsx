@@ -6,7 +6,6 @@ import { message } from 'antd';
 import styles from './ActionHistory.module.scss';
 import CustomTable from '@/components/CustomTable';
 import deviceServices from '@/services/deviceServices';
-
 import { Tag } from 'antd';
 
 const cx = classNames.bind(styles);

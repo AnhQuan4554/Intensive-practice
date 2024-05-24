@@ -1,16 +1,16 @@
-const { mqttClient, publishMessage } = require("../utils/mqttClient");
-const DeviceModel = require("../models/Device.model");
-const DataActionModel = require("../models/DataAction.model");
-const { Op } = require("sequelize");
-const dateHelper = require("../utils/date.helper");
-const UserModel = require("../models/User.model");
+const { mqttClient, publishMessage } = require('../utils/mqttClient');
+const DeviceModel = require('../models/Device.model');
+const DataActionModel = require('../models/DataAction.model');
+const { Op } = require('sequelize');
+const dateHelper = require('../utils/date.helper');
+const UserModel = require('../models/User.model');
 const deviceServices = {};
 
 deviceServices.createDevice = async (payload) => {
   const { name, description, deviceId } = payload;
   const response = {
     statusCode: 201,
-    message: "Succeed to add device",
+    message: 'Succeed to add device',
     data: {},
   };
   try {
@@ -19,9 +19,9 @@ deviceServices.createDevice = async (payload) => {
     const device = await DeviceModel.create(requirements);
     response.data = device;
   } catch (error) {
-    console.error("Error request:", error);
+    console.error('Error request:', error);
     response.statusCode = 500;
-    response.message = "Failed to add device";
+    response.message = 'Failed to add device';
     throw error;
   }
   return response;
@@ -30,17 +30,17 @@ deviceServices.createDevice = async (payload) => {
 deviceServices.fetchAll = async (payload) => {
   const response = {
     statusCode: 200,
-    message: "Succeed to get all devices",
+    message: 'Succeed to get all devices',
     data: {},
   };
   try {
     const devices = await DeviceModel.findAll();
-    if (!devices) response.message = "No device found.";
+    if (!devices) response.message = 'No device found.';
     response.data = devices;
   } catch (error) {
-    console.error("Error request:", error);
+    console.error('Error request:', error);
     response.statusCode = 500;
-    response.message = "Failed to get all devices";
+    response.message = 'Failed to get all devices';
     throw error;
   }
   return response;
@@ -50,21 +50,21 @@ deviceServices.fetchDevice = async (payload) => {
   const { deviceId } = payload;
   const response = {
     statusCode: 200,
-    message: "Succeed to get a device",
+    message: 'Succeed to get a device',
     data: {},
   };
   try {
-    if (!deviceId) throw new Error("No deviceId found!");
+    if (!deviceId) throw new Error('No deviceId found!');
     const device = await DeviceModel.findByPk(deviceId);
     if (!device) {
       response.statusCode = 404;
-      response.message = "No device found.";
+      response.message = 'No device found.';
       return response;
     } else response.data = device;
   } catch (error) {
-    console.error("Error request:", error);
+    console.error('Error request:', error);
     response.statusCode = 500;
-    response.message = "Failed to get a device";
+    response.message = 'Failed to get a device';
     throw error;
   }
   return response;
@@ -74,7 +74,7 @@ deviceServices.updateDevice = async (payload) => {
   const { name, description, deviceId } = payload;
   const response = {
     statusCode: 200,
-    message: "Succeed to update device",
+    message: 'Succeed to update device',
     data: {},
   };
   try {
@@ -87,9 +87,9 @@ deviceServices.updateDevice = async (payload) => {
     device = await DeviceModel.findByPk(deviceId);
     response.data = device;
   } catch (error) {
-    console.error("Error request:", error);
+    console.error('Error request:', error);
     response.statusCode = 500;
-    response.message = "Failed to update device";
+    response.message = 'Failed to update device';
     throw error;
   }
   return response;
@@ -99,11 +99,11 @@ deviceServices.updateDeviceStatus = async (payload) => {
   const { deviceId, action, _save, email } = payload;
   const response = {
     statusCode: 200,
-    message: "Succeed to update device status",
+    message: 'Succeed to update device status',
     data: {},
   };
   try {
-    const requirements = { action: action ? "ON" : "OFF" };
+    const requirements = { action: action ? 'ON' : 'OFF' };
     //  SELECT `id`, `name`, `description`, `createdAt`, `updatedAt` FROM `devices` AS `device` WHERE `device`.`id` = 'D1';
     const device = await DeviceModel.findByPk(deviceId);
     const user = await UserModel.findOne({
@@ -121,15 +121,15 @@ deviceServices.updateDeviceStatus = async (payload) => {
         response.data = deviceHistory;
       } else {
         response.statusCode = 200;
-        response.message = "Succeed to update device status but NOT SAVE";
+        response.message = 'Succeed to update device status but NOT SAVE';
       }
     } else {
       response.statusCode = 404;
-      response.message = "Device not found";
+      response.message = 'Device not found';
     }
   } catch (error) {
     response.statusCode = 500;
-    response.message = "Failed to update device status";
+    response.message = 'Failed to update device status';
     throw error;
   }
 
@@ -139,7 +139,7 @@ deviceServices.updateDeviceStatus = async (payload) => {
 deviceServices.fetchDataActionByCriteria = async (payload) => {
   const response = {
     statusCode: 200,
-    message: "Succeed to get data device",
+    message: 'Succeed to get data device',
     data: {},
     meta: {},
   };
@@ -147,11 +147,11 @@ deviceServices.fetchDataActionByCriteria = async (payload) => {
     const searchCriteria = payload;
     if (
       !searchCriteria ||
-      typeof searchCriteria !== "object" ||
+      typeof searchCriteria !== 'object' ||
       Object.keys(searchCriteria).length === 0
     ) {
       response.statusCode = 422; //  Unprocessable Entity
-      response.message = "Invalid search criteria.";
+      response.message = 'Invalid search criteria.';
     } else {
       let condition = {};
       let whereCondition = {};
@@ -188,6 +188,7 @@ deviceServices.fetchDataActionByCriteria = async (payload) => {
         const direction = searchCriteria.direction.toString().toUpperCase();
         orderCondition.push([`${searchCriteria.orderBy}`, `${direction}`]);
       }
+      //
       if (Object.keys(whereCondition).length !== 0)
         condition.where = whereCondition;
       if (orderCondition.length !== 0) condition.order = orderCondition;
@@ -224,7 +225,7 @@ deviceServices.fetchDataActionByCriteria = async (payload) => {
     return response;
   } catch (error) {
     response.statusCode = 500;
-    response.message = "Failed to get data device";
+    response.message = 'Failed to get data device';
     throw error;
   }
   return response;
@@ -234,13 +235,13 @@ deviceServices.removeActionData = async (payload) => {
   const { dataId } = payload;
   const response = {
     statusCode: 200,
-    message: "Success to delete data action",
+    message: 'Success to delete data action',
     data: {},
   };
   try {
     if (!Array.isArray(dataId)) {
       response.statusCode = 422;
-      response.message = "The dataId is invalid";
+      response.message = 'The dataId is invalid';
       throw new Error(response.message);
     } else {
       const results = await DataActionModel.destroy({
@@ -253,9 +254,9 @@ deviceServices.removeActionData = async (payload) => {
       response.data = results;
     }
   } catch (error) {
-    console.error("Error request:", error);
+    console.error('Error request:', error);
     response.statusCode = 500;
-    response.message = "Failed to delete data action";
+    response.message = 'Failed to delete data action';
     throw error;
   }
   return response;

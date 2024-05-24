@@ -2,6 +2,8 @@ import Dashboard from '@/pages/Dashboard';
 import SensorsHistory from '@/pages/SensorsHistory';
 import ActionHistory from '@/pages/ActionHistory';
 import Profile from '@/pages/Profile';
+import Login from '@/pages/Login';
+import Register from '@/pages/Register';
 
 export const publicRoutes = [
   {
@@ -19,6 +21,14 @@ export const publicRoutes = [
   {
     path: '/profile',
     component: Profile,
+  },
+  {
+    path: '/auth/login',
+    component: Login,
+  },
+  {
+    path: '/auth/register',
+    component: Register,
   },
 ];
 

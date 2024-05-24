@@ -1,13 +1,16 @@
 import { Fragment } from 'react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import { DefaultLayout } from '@/layouts';
 import { publicRoutes } from '@/routes';
+import HistoryRouter from '@/components/HistoryRouter';
+import { myHistory } from '@/utils/history';
 
 import '@/assets/styles/App.scss';
 
 function App() {
   return (
-    <BrowserRouter>
+    // <BrowserRouter>
+    <HistoryRouter history={myHistory}>
       <div className="App">
         <Routes>
           {publicRoutes.map((route, index) => {
@@ -34,7 +37,8 @@ function App() {
           })}
         </Routes>
       </div>
-    </BrowserRouter>
+    </HistoryRouter>
+    // </BrowserRouter>
   );
 }
 

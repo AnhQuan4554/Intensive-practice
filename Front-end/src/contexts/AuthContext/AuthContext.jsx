@@ -5,6 +5,7 @@ import authAxios from '@/services/authAxios';
 const AuthContext = createContext();
 
 function AuthProvider({ children }) {
+  const [isLoading, setIsLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
@@ -19,6 +20,9 @@ function AuthProvider({ children }) {
         .catch((error) => {
           myHistory.replace('/auth/login');
           console.log(error);
+        })
+        .finally(() => {
+          setIsLoading(false);
         });
     } else {
       myHistory.replace('/auth/login');
@@ -30,6 +34,7 @@ function AuthProvider({ children }) {
   };
 
   const values = {
+    isLoading,
     currentUser,
     handleSetCurrentUser,
   };

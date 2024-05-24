@@ -10,7 +10,7 @@ import { FaPhoneAlt } from 'react-icons/fa';
 import styles from './Register.module.scss';
 import authServices from '@/services/authServices';
 import { AuthContext } from '@/contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const cx = classNames.bind(styles);
 
@@ -25,6 +25,7 @@ const validateEmail = (email) => {
 const Register = () => {
   const navigate = useNavigate();
   const [messageApi, contextHolder] = message.useMessage();
+  const [isLoading, setIsLoading] = useState(false);
   const { handleSetCurrentUser } = useContext(AuthContext);
   const [error, setError] = useState({});
   const [inputValues, setInputValues] = useState({
@@ -67,7 +68,7 @@ const Register = () => {
       setError(others);
     }
 
-    if (formData.password === formData.confirmPassword) {
+    if (formData.password !== formData.confirmPassword) {
       setError((prev) => ({
         ...prev,
         password: 'Password is not matching',
@@ -78,6 +79,8 @@ const Register = () => {
       const { password, confirmPassword, ...others } = error;
       setError(others);
     }
+
+    return true;
   }
 
   const handleSubmit = async (e) => {
@@ -98,17 +101,26 @@ const Register = () => {
 
     if (!isValidForm(formData)) return;
 
+    setIsLoading(true);
     authServices
       .registerUser(formData)
       .then((response) => {
         messageApi.success(response.message);
         setTimeout(() => {
-          navigate('/');
+          navigate('/auth/login');
         }, 500);
       })
       .catch((error) => {
-        setError(true);
-        console.log(error);
+        const message = error?.data?.message;
+        console.log('Failed to register', error);
+        if (error?.status === 409) messageApi.error(error?.data?.message);
+        setError((prev) => ({
+          ...prev,
+          email: message || 'Something went wrong.',
+        }));
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   };
 
@@ -144,6 +156,7 @@ const Register = () => {
                 onChange={handleInputChange}
                 status={error.email ? 'error' : ''}
               />
+              {error.email && <p className={cx('error-message')}>{error.email}</p>}
             </Space>
 
             <Space direction="vertical">
@@ -170,6 +183,7 @@ const Register = () => {
                 prefix={<RiLockPasswordLine />}
                 status={error.password ? 'error' : ''}
               />
+              {error.password && <p className={cx('error-message')}>{error.password}</p>}
             </Space>
 
             <Space direction="vertical">
@@ -183,15 +197,20 @@ const Register = () => {
                 prefix={<RiLockPasswordLine />}
                 status={error.confirmPassword ? 'error' : ''}
               />
+              {error.confirmPassword && <p className={cx('error-message')}>{error.confirmPassword}</p>}
             </Space>
 
             {/* {error && <p className={cx('error-message')}>Email or Password is incorrect!</p>} */}
+            <p>
+              Already have an account. Let <Link to={'/auth/login'}>Login</Link>
+            </p>
 
             <Button
               type="primary"
               size="large"
               htmlType="submit"
               disabled={Object.values(inputValues).some((value) => !value.trim())}
+              loading={isLoading}
             >
               Register
             </Button>

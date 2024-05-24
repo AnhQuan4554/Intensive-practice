@@ -24,6 +24,7 @@ authServices.registerUser = async (data) => {
     response = await sendRequest({
       method: 'POST',
       path: '/auth/register',
+      allowLog: true,
       data,
     });
     return response;

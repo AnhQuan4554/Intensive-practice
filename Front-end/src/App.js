@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import { Fragment, useContext } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { DefaultLayout } from '@/layouts';
 import { publicRoutes } from '@/routes';
@@ -6,8 +6,12 @@ import HistoryRouter from '@/components/HistoryRouter';
 import { myHistory } from '@/utils/history';
 
 import '@/assets/styles/App.scss';
+import { AuthContext } from '@/contexts/AuthContext';
 
 function App() {
+  const { currentUser, isLoading } = useContext(AuthContext);
+  if (!currentUser && !isLoading) myHistory.replace('/auth/login');
+
   return (
     // <BrowserRouter>
     <HistoryRouter history={myHistory}>

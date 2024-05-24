@@ -28,7 +28,7 @@ userServices.fetchUserByCriteria = async (payload) => {
   const response = {
     statusCode: 200,
     message: 'Succeed to get user',
-    data: [],
+    data: null,
     meta: {},
   };
   try {
@@ -81,7 +81,10 @@ userServices.fetchUserByCriteria = async (payload) => {
       // Query
       const users = await UserModel.findAll(condition);
 
-      response.data = users;
+      if (users.length > 0) {
+        response.data = users;
+      }
+
       response.meta.pagination = {
         count: users.length,
         total: totalData,

@@ -120,7 +120,10 @@ function Header() {
                 />
               </Space>
             ) : (
-              <NavItem leftIcon={<IoMdLogIn />} className={cx('nav-link')} title={'Login'} to={'/auth/login'} />
+              <Space size={'small'}>
+                <NavItem leftIcon={<IoMdLogIn />} className={cx('nav-link')} title={'Login'} to={'/auth/login'} />
+                <NavItem className={cx('nav-link')} title={'Register'} to={'/auth/register'} />
+              </Space>
             )}
           </Space>
         </nav>

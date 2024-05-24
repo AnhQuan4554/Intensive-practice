@@ -8,7 +8,7 @@ import { MdOutlineAttachEmail } from 'react-icons/md';
 import styles from './Login.module.scss';
 import authServices from '@/services/authServices';
 import { AuthContext } from '@/contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const cx = classNames.bind(styles);
 
@@ -17,6 +17,7 @@ const Login = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const { handleSetCurrentUser } = useContext(AuthContext);
   const [error, setError] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [inputValues, setInputValues] = useState({
     email: '',
     password: '',
@@ -34,6 +35,7 @@ const Login = () => {
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     const formData = { email: inputValues.email, password: inputValues.password };
+    setIsLoading(true);
     authServices
       .loginUser(formData)
       .then((response) => {
@@ -53,6 +55,9 @@ const Login = () => {
       .catch((error) => {
         setError(true);
         console.log(error);
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   };
 
@@ -90,12 +95,16 @@ const Login = () => {
             </Space>
 
             {error && <p className={cx('error-message')}>Email or Password is incorrect!</p>}
+            <p>
+              Don't have account. Please <Link to={'/auth/register'}>Register</Link>
+            </p>
 
             <Button
               type="primary"
               size="large"
               htmlType="submit"
               disabled={Object.values(inputValues).some((value) => !value.trim())}
+              loading={isLoading}
             >
               Login
             </Button>

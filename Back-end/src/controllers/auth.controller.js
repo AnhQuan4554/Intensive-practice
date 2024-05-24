@@ -3,6 +3,7 @@ const userServices = require('../services/user.service');
 const tokenHelper = require('../utils/token.helper');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const { validationResult } = require('express-validator');
 
 const authController = {};
 const refreshKey = process.env.REFRESH_SECRET_KEY;
@@ -75,6 +76,12 @@ authController.postRegister = async (req, res, next) => {
   let response = {
     message: 'Succeed to register',
   };
+
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    response.message = 'Email is already used';
+    return res.status(409).json(response);
+  }
 
   try {
     const { name, password, email, phone, confirmPassword } = req.body;

@@ -16,4 +16,11 @@ userController.createNew = async (req, res, next) => {
     return next(error);
   }
 };
+
+userController.generateScript = async (req, res) => {
+  const { email } = req.params;
+  const response = await userServices.generateScript(email);
+  return res.send(response);
+};
+
 module.exports = userController;

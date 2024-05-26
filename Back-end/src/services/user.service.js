@@ -45,6 +45,14 @@ userServices.generateScript = async (email) => {
       },
     });
     if (user) {
+      const { contactId, id } = user;
+      if (!contactId || contactId == "" || contactId == null) {
+        const intercomContact = await createIntercomContact(user);
+        await UserModel.update(
+          { contactId: intercomContact.id },
+          { where: { id: id } }
+        );
+      }
       const intercomScript = `
     window.intercomSettings = {
       api_base: "https://api-iam.intercom.io",

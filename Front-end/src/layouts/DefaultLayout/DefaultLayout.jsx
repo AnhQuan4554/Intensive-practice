@@ -17,8 +17,7 @@ function DefaultLayout({ children }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:4004/api/user/script/quan@gmail.com');
-        console.log('response++', response.data);
+        const response = await axios.get('http://localhost:4004/api/user/script/quan12V1@gmail.com');
         setIntercomScript(response.data);
       } catch (error) {
         console.error('Error fetching data:', error);

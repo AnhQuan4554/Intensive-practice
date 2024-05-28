@@ -1,8 +1,8 @@
-const Sequelize = require("sequelize");
-const sequelize = require("../configs/database");
+const Sequelize = require('sequelize');
+const sequelize = require('../configs/database');
 
 const UserModel = sequelize.define(
-  "user",
+  'user',
   {
     id: {
       type: Sequelize.INTEGER,
@@ -20,10 +20,16 @@ const UserModel = sequelize.define(
     email: {
       type: Sequelize.STRING,
       allowNull: false,
+      unique: true,
     },
     phone: {
       type: Sequelize.STRING,
       allowNull: false,
+    },
+    allowNotify: {
+      type: Sequelize.TINYINT,
+      allowNull: false,
+      defaultValue: 1,
     },
     contactId: {
       type: Sequelize.STRING,

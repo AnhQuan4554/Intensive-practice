@@ -1,4 +1,4 @@
-const UserModel = require("../models/User.model");
+const UserModel = require('../models/User.model');
 const userServices = {};
 const { Client } = require("intercom-client");
 const { INTERCOM_TOKEN, APP_ID } = process.env;
@@ -9,12 +9,11 @@ userServices.createUser = async (payload) => {
   const { name, password, email, phone } = payload;
   const response = {
     statusCode: 201,
-    message: "Succeed to add user",
-    data: {},
+    message: 'Succeed to add user',
   };
   if (!name || !password || !email || !phone) {
     response.statusCode = 400;
-    response.message = "You must not leave out any information.";
+    response.message = 'You must not leave out any information.';
     return response;
   }
   try {
@@ -29,9 +28,9 @@ userServices.createUser = async (payload) => {
     );
     response.data = user;
   } catch (error) {
-    console.error("Error request:", error);
+    console.error('Error request:', error);
     response.statusCode = 500;
-    response.message = "Failed to create new user";
+    response.message = 'Failed to create new user';
     throw error;
   }
   return response;

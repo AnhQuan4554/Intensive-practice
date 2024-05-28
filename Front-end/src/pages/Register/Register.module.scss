@@ -1,0 +1,28 @@
+.wrapper {
+  display: flex;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.form {
+  padding: 40px;
+  min-width: 400px;
+  border-radius: 18px;
+  background-color: var(--white);
+  height: fit-content;
+  box-shadow: var(--primary-box-shadow);
+}
+
+.error-message {
+  color: var(--pink);
+  animation: fadeIn 300ms ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

@@ -1,13 +1,20 @@
-import { Fragment } from 'react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { Fragment, useContext } from 'react';
+import { Route, Routes } from 'react-router-dom';
 import { DefaultLayout } from '@/layouts';
 import { publicRoutes } from '@/routes';
+import HistoryRouter from '@/components/HistoryRouter';
+import { myHistory } from '@/utils/history';
 
 import '@/assets/styles/App.scss';
+import { AuthContext } from '@/contexts/AuthContext';
 
 function App() {
+  const { currentUser, isLoading } = useContext(AuthContext);
+  if (!currentUser && !isLoading) myHistory.replace('/auth/login');
+
   return (
-    <BrowserRouter>
+    // <BrowserRouter>
+    <HistoryRouter history={myHistory}>
       <div className="App">
         <Routes>
           {publicRoutes.map((route, index) => {
@@ -34,7 +41,8 @@ function App() {
           })}
         </Routes>
       </div>
-    </BrowserRouter>
+    </HistoryRouter>
+    // </BrowserRouter>
   );
 }
 

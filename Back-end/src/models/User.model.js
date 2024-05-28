@@ -31,6 +31,10 @@ const UserModel = sequelize.define(
       allowNull: false,
       defaultValue: 1,
     },
+    contactId: {
+      type: Sequelize.STRING,
+      allowNull: true,
+    },
   },
   {
     timestamps: true,

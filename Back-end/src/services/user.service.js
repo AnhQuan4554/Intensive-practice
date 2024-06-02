@@ -1,6 +1,6 @@
 const UserModel = require('../models/User.model');
 const userServices = {};
-const { Client } = require("intercom-client");
+const { Client } = require('intercom-client');
 const { INTERCOM_TOKEN, APP_ID } = process.env;
 
 const client = new Client({ tokenAuth: { token: INTERCOM_TOKEN } });
@@ -45,7 +45,7 @@ userServices.generateScript = async (email) => {
     });
     if (user) {
       const { contactId, id } = user;
-      if (!contactId || contactId == "" || contactId == null) {
+      if (!contactId || contactId == '' || contactId == null) {
         const intercomContact = await createIntercomContact(user);
         await UserModel.update(
           { contactId: intercomContact.id },
@@ -71,10 +71,11 @@ userServices.generateScript = async (email) => {
       return null;
     }
   } catch (error) {
-    console.error("Error:", error);
+    console.error('Error:', error);
     return null;
   }
 };
+
 const createIntercomContact = async (user) => {
   const { id, email, name, createdAt } = user;
   const newContact = await client.contacts.createUser({
@@ -84,6 +85,86 @@ const createIntercomContact = async (user) => {
     signedUpAt: createdAt,
   });
   return newContact;
+};
+
+userServices.fetchUserByCriteria = async (payload) => {
+  const response = {
+    statusCode: 200,
+    message: 'Succeed to get user',
+    data: null,
+    meta: {},
+  };
+  try {
+    const searchCriteria = payload;
+    if (
+      !searchCriteria ||
+      typeof searchCriteria !== 'object' ||
+      Object.keys(searchCriteria).length === 0
+    ) {
+      response.statusCode = 422;
+      response.message = 'Invalid search criteria.';
+    } else {
+      let condition = {};
+      let whereCondition = {};
+      let orderCondition = [];
+
+      // WHERE condition
+      if (searchCriteria.userId) {
+        whereCondition.userId = searchCriteria.userId;
+      }
+
+      if (searchCriteria.email) {
+        whereCondition.email = searchCriteria.email;
+      }
+
+      // ORDER condition
+      let { orderBy, orderDirection } = searchCriteria;
+      if (!orderDirection || !['DESC', 'ASC'].includes(orderDirection))
+        orderDirection = 'DESC';
+      if (!orderBy) orderBy = 'createdAt';
+      if (orderBy && orderDirection) {
+        const direction = orderDirection.toString().toUpperCase();
+        orderCondition.push([`${orderBy}`, `${direction}`]);
+      }
+
+      //
+      if (Object.keys(whereCondition).length !== 0)
+        condition.where = whereCondition;
+      if (orderCondition.length !== 0) condition.order = orderCondition;
+
+      // QUERY
+      const totalData = await UserModel.count(condition);
+
+      // Pagination
+      let { page, pageSize } = searchCriteria;
+      if (!page) page = 1;
+      if (!pageSize) pageSize = 10;
+      condition.limit = pageSize;
+      condition.offset = (page - 1) * pageSize;
+      // Query
+      const users = await UserModel.findAll(condition);
+
+      if (users?.length > 0) {
+        response.data = users;
+      }
+
+      response.meta.pagination = {
+        count: users.length,
+        total: totalData,
+        pageSize,
+        currentPage: page,
+        totalPage: Math.ceil(totalData / pageSize),
+        hasNext: page * pageSize < totalData,
+        hasPrevious: page > 1,
+      };
+    }
+
+    return response;
+  } catch (error) {
+    response.statusCode = 500;
+    response.message = 'Failed to get user';
+    throw error;
+  }
 };
 
 module.exports = userServices;

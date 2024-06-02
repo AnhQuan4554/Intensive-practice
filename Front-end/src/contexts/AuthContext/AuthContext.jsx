@@ -15,6 +15,7 @@ function AuthProvider({ children }) {
         .get('/auth/nothing')
         .then((response) => {
           const currentUser = response.data;
+          console.log('currentUser', currentUser);
           if (currentUser) setCurrentUser(currentUser);
         })
         .catch((error) => {

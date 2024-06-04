@@ -535,18 +535,20 @@ function CustomTable({
       </div>
     );
   };
-  // Prepare download data
+  // Prepare export data
   useEffect(() => {
     const header = ['STT'].concat(
       filteredColumns
         .map((column) => column.title)
         .filter((item) => {
           const lowerCaseStr = item.toLowerCase().split(' ').join('');
-          return (
-            lowerCaseStr !== 'id' && checkedColumnList.some((checkedItem) => checkedItem.toLowerCase() === lowerCaseStr)
-          );
+          const check = checkedColumnList.some((checkedItem) => {
+            return lowerCaseStr?.startsWith(checkedItem?.toLowerCase());
+          });
+          return lowerCaseStr !== 'id' && check;
         }),
     );
+
     const body = selectedData.map(({ id, ...fields }) => {
       let row = [id];
       Object.entries(fields).forEach(([key, value]) => {
@@ -557,6 +559,7 @@ function CustomTable({
       });
       return row;
     });
+
     setTableData({ header, body });
   }, [filteredColumns, selectedData, checkedColumnList]);
 
@@ -652,6 +655,7 @@ function CustomTable({
               type="primary"
               style={{
                 right: 24,
+                marginBottom: 80,
               }}
               icon={<RiToolsFill />}
               tooltip="Tools"

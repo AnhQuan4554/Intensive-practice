@@ -1,11 +1,16 @@
 const express = require('express');
 const router = express.Router();
 const deviceController = require('../controllers/device.controller');
+const authMiddleware = require('../middlewares/auth.middleware');
 
 // GET data action
 router.get('/action', deviceController.getDataAction);
 // DELETE data action
-router.delete('/action/delete', deviceController.deleteDataAction);
+router.delete(
+  '/action/delete',
+  authMiddleware.verifyToken,
+  deviceController.deleteDataAction
+);
 // CREATE a new device
 router.post('/create', deviceController.createNew);
 // UPDATE a device status

@@ -1,4 +1,5 @@
 import sendRequest from '@/utils/httpRequest';
+import authAxios from './authAxios';
 const sensorServices = {};
 
 sensorServices.getSensorData = async ({ method, token, data, params, path, allowLog }) => {
@@ -11,21 +12,9 @@ sensorServices.getSensorData = async ({ method, token, data, params, path, allow
   }
 };
 
-sensorServices.deleteSensorData = async ({ method, token, data, params, path, allowLog }) => {
-  let response;
-  try {
-    response = await sendRequest({
-      method: 'DELETE',
-      data,
-      token,
-      path: `/sensor/data/delete`,
-      params,
-      allowLog,
-    });
-    return response;
-  } catch (error) {
-    throw error;
-  }
+sensorServices.deleteSensorData = async (params) => {
+  const url = '/sensor/data/delete';
+  return authAxios.delete(url, { params, withCredentials: true });
 };
 
 export default sensorServices;

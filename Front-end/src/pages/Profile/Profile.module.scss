@@ -1,0 +1,52 @@
+.profile-wrapper {
+  padding: 24px 0;
+  height: 100%;
+  background-color: var(--white);
+  border-radius: 4px;
+  width: 100%;
+
+  * {
+    font-family: 'Poppins', sans-serif;
+  }
+}
+
+.error-message {
+  color: var(--pink);
+  animation: fadeIn 300ms ease-in;
+}
+
+.tab-container {
+  .ant-tabs-tab-icon {
+    display: flex;
+  }
+}
+
+.account-info-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 24px;
+
+  .account-avatar {
+    background-color: #fde3cf;
+    color: #f56a00;
+  }
+}
+
+.account-info {
+  .display-name {
+    font-weight: 500;
+    font-size: 2.4rem;
+  }
+
+  .input-label {
+    display: inline-block;
+    font-size: 1.6rem;
+    min-width: 100px;
+    font-weight: 500;
+  }
+
+  .input-control {
+    min-width: 350px;
+  }
+}

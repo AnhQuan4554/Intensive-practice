@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const userServices = require('../services/user.service');
 const authMiddleware = {};
 
 const accessKey = process.env.ACCESS_SECRET_KEY;
@@ -12,13 +13,22 @@ authMiddleware.verifyToken = (req, res, next) => {
   }
 
   const accessToken = token?.split(' ')[1];
-  jwt.verify(accessToken, accessKey, (error, tokenData) => {
+  jwt.verify(accessToken, accessKey, async (error, tokenData) => {
     if (error) {
       return res.status(403).json({
         message: 'You are not allowed',
       });
     }
-    req.currentUser = tokenData;
+    const userResponse = await userServices.fetchUserByCriteria({
+      email: tokenData.email,
+    });
+    const currentUser = userResponse?.data[0]?.dataValues;
+    if (!currentUser) {
+      return res.status(403).json({
+        message: 'You are not allowed',
+      });
+    }
+    req.currentUser = currentUser;
     next();
   });
 };

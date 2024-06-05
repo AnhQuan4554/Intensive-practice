@@ -130,7 +130,6 @@ sensorServices.fetchSensorDataByCriteria = async (payload) => {
   };
   try {
     const searchCriteria = payload;
-    console.log('searchCriteria', searchCriteria);
     if (
       !searchCriteria ||
       typeof searchCriteria !== 'object' ||

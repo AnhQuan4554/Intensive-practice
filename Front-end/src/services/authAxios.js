@@ -31,6 +31,8 @@ authAxios.interceptors.request.use(async (config) => {
   }
   refreshTokenRequest = null;
   config.headers.Authorization = `Bearer ${accessToken}`;
+
+  console.log('config', config);
   return config;
 });
 

@@ -23,9 +23,9 @@ const cx = classNames.bind(styles);
 
 function WidgetBar({ socketClient }) {
   const { dark } = useContext(ThemeContext);
-  const [temperature, setTemperature] = useState(99);
-  const [humidity, setMoisture] = useState(99);
-  const [brightness, setBrightness] = useState(999);
+  const [temperature, setTemperature] = useState(null);
+  const [humidity, setMoisture] = useState(null);
+  const [brightness, setBrightness] = useState(null);
 
   useEffect(() => {
     // const socket = socketIOClient(ENDPOINT, { transports: ['websocket', 'polling', 'flashsocket'] });
@@ -55,7 +55,7 @@ function WidgetBar({ socketClient }) {
         <div className={cx('card-info')}>
           <h3 className={cx('card-header')}>Temperature</h3>
           <p className={cx('card-number')}>
-            {temperature}
+            {temperature ? temperature : '...'}
             <span>°C</span>
           </p>
         </div>
@@ -77,7 +77,7 @@ function WidgetBar({ socketClient }) {
         <div className={cx('card-info')}>
           <h3 className={cx('card-header')}>Humidity</h3>
           <p className={cx('card-number')}>
-            {humidity}
+            {humidity ? humidity : '...'}
             <span>%</span>
           </p>
         </div>
@@ -97,7 +97,7 @@ function WidgetBar({ socketClient }) {
         <div className={cx('card-info')}>
           <h3 className={cx('card-header')}>Brightness</h3>
           <p className={cx('card-number')}>
-            {brightness}
+            {brightness ? brightness : '...'}
             <span>Lux</span>
           </p>
         </div>

@@ -78,7 +78,6 @@ authController.postRegister = async (req, res, next) => {
   };
 
   const errors = validationResult(req);
-  console.log('ERRORS', errors);
   if (!errors.isEmpty()) {
     response.message = 'Email is already used';
     return res.status(409).json(response);

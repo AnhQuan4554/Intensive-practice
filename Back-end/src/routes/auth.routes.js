@@ -26,8 +26,9 @@ router.post('/refresh', authController.postRefresh);
 router.post('/logout', authMiddleware.verifyToken, authController.postLogout);
 
 router.get('*', authMiddleware.verifyToken, (req, res) => {
+  const { password, ...userData } = req.currentUser;
   res.status(200).json({
-    data: req.currentUser,
+    data: userData,
   });
 });
 

@@ -1,5 +1,5 @@
 import { useContext, useEffect, useId, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import classNames from 'classnames/bind';
 
 import { Space, Tag, Tooltip, message } from 'antd';
@@ -30,6 +30,7 @@ const cx = classNames.bind(styles);
 function Header() {
   const themeId = useId();
   const { dark, handleToggleDark } = useContext(ThemeContext);
+  const navigate = useNavigate();
   const { currentUser, handleSetCurrentUser } = useContext(AuthContext);
   const [isMQTTConnected, setIsMQTTConnected] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
@@ -60,6 +61,7 @@ function Header() {
           handleSetCurrentUser(null);
           localStorage.removeItem('currentUser');
           localStorage.removeItem('accessToken');
+          navigate('/auth/login');
         }, 500);
       })
       .catch((error) => {

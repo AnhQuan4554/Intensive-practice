@@ -75,7 +75,7 @@ function SensorsHistory() {
     };
     messageApi.loading('Deleting...', [0.25]);
     await deviceServices
-      .deleteActionData({ params, allowLog: true })
+      .deleteActionData(params)
       .then((response) => {
         if (response?.statusCode === 200) {
           messageApi.success('SUCCEED to DELETE selected action data');

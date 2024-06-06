@@ -36,6 +36,73 @@ userServices.createUser = async (payload) => {
   return response;
 };
 
+userServices.updateByCriteria = async (payload) => {
+  const response = {
+    statusCode: 200,
+    message: 'Succeed to update user',
+    data: null,
+  };
+  try {
+    const searchCriteria = payload;
+    if (
+      !searchCriteria ||
+      typeof searchCriteria !== 'object' ||
+      Object.keys(searchCriteria).length === 0
+    ) {
+      response.statusCode = 422;
+      response.message = 'Invalid search criteria.';
+    } else {
+      let condition = {};
+      let whereCondition = {};
+
+      // WHERE condition
+      if (searchCriteria.userId) {
+        whereCondition.userId = searchCriteria.userId;
+      }
+
+      if (searchCriteria.email) {
+        whereCondition.email = searchCriteria.email;
+      }
+
+      if (searchCriteria.phone) {
+        whereCondition.phone = searchCriteria.phone;
+      }
+
+      if (searchCriteria.allowNotify) {
+        whereCondition.phone = searchCriteria.phone;
+      }
+
+      //
+      if (Object.keys(whereCondition).length !== 0)
+        condition.where = whereCondition;
+
+      const newUserData = Object.entries(searchCriteria).reduce(
+        (total, currentValue) => {
+          const [key, value] = currentValue;
+          if (!!value || value === 0) total[key] = value;
+          return total;
+        },
+        {}
+      );
+
+      console.log('condition', condition);
+
+      // Query
+      const users = await UserModel.update(newUserData, condition);
+
+      if (users?.length > 0) {
+        response.data = users;
+      }
+    }
+
+    return response;
+  } catch (error) {
+    response.statusCode = 500;
+    response.message = 'Failed to update user';
+    throw error;
+  }
+};
+
 userServices.generateScript = async (email) => {
   try {
     const user = await UserModel.findOne({
@@ -115,6 +182,14 @@ userServices.fetchUserByCriteria = async (payload) => {
 
       if (searchCriteria.email) {
         whereCondition.email = searchCriteria.email;
+      }
+
+      if (searchCriteria.phone) {
+        whereCondition.phone = searchCriteria.phone;
+      }
+
+      if (searchCriteria.allowNotify) {
+        whereCondition.phone = searchCriteria.phone;
       }
 
       // ORDER condition

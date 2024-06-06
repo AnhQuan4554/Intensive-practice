@@ -26,7 +26,6 @@ const Register = () => {
   const navigate = useNavigate();
   const [messageApi, contextHolder] = message.useMessage();
   const [isLoading, setIsLoading] = useState(false);
-  const { handleSetCurrentUser } = useContext(AuthContext);
   const [error, setError] = useState({});
   const [inputValues, setInputValues] = useState({
     name: '',

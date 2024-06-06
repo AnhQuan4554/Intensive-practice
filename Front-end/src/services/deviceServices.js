@@ -1,4 +1,5 @@
 import sendRequest from '@/utils/httpRequest';
+import authAxios from './authAxios';
 const deviceServices = {};
 
 deviceServices.updateDeviceStatus = async ({ method, token, data, params, path, allowLog }) => {
@@ -63,21 +64,9 @@ deviceServices.getDataAction = async ({ method, token, data, params, path, allow
   }
 };
 
-deviceServices.deleteActionData = async ({ method, token, data, params, path, allowLog }) => {
-  let response;
-  try {
-    response = await sendRequest({
-      method: 'DELETE',
-      data,
-      token,
-      path: `/device/action/delete`,
-      params,
-      allowLog,
-    });
-    return response;
-  } catch (error) {
-    throw error;
-  }
+deviceServices.deleteActionData = async (params) => {
+  const url = '/device/action/delete';
+  return authAxios.delete(url, { params });
 };
 
 export default deviceServices;

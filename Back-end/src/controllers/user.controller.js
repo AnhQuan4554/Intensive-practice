@@ -1,5 +1,5 @@
-const { validationResult } = require('express-validator');
-const userServices = require('../services/user.service');
+const { validationResult } = require("express-validator");
+const userServices = require("../services/user.service");
 
 const userController = {};
 
@@ -10,9 +10,10 @@ userController.createNew = async (req, res, next) => {
   try {
     const payload = { name, password, email, phone };
     response = await userServices.createUser(payload);
+    await userServices.sendMessageRegister(email);
     res.status(201).json(response);
   } catch (error) {
-    console.log('Error request:', error);
+    console.log("Error request:", error);
     res.status(500).json(response);
     return next(error);
   }
@@ -23,15 +24,21 @@ userController.generateScript = async (req, res) => {
   const response = await userServices.generateScript(email);
   return res.send(response);
 };
+userController.sendMessageRegister = async (req, res) => {
+  const { email } = req.params;
+  const response = await userServices.sendMessageRegister(email);
+  console.log("response", response);
+  return res.send(response);
+};
 
 userController.updateUser = async (req, res) => {
   let response = {
-    message: 'Succeed to update user',
+    message: "Succeed to update user",
   };
 
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    response.message = 'Email is already used';
+    response.message = "Email is already used";
     return res.status(409).json(response);
   }
 
@@ -46,7 +53,7 @@ userController.updateUser = async (req, res) => {
     }
     res.status(200).json(response);
   } catch (error) {
-    console.log('Error request:', error);
+    console.log("Error request:", error);
     res.status(500).json(response);
     return next(error);
   }

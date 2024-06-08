@@ -1,6 +1,6 @@
-const UserModel = require('../models/User.model');
+const UserModel = require("../models/User.model");
 const userServices = {};
-const { Client } = require('intercom-client');
+const { Client } = require("intercom-client");
 const { INTERCOM_TOKEN, APP_ID } = process.env;
 
 const client = new Client({ tokenAuth: { token: INTERCOM_TOKEN } });
@@ -9,11 +9,11 @@ userServices.createUser = async (payload) => {
   const { name, password, email, phone } = payload;
   const response = {
     statusCode: 201,
-    message: 'Succeed to add user',
+    message: "Succeed to add user",
   };
   if (!name || !password || !email || !phone) {
     response.statusCode = 400;
-    response.message = 'You must not leave out any information.';
+    response.message = "You must not leave out any information.";
     return response;
   }
   try {
@@ -28,9 +28,9 @@ userServices.createUser = async (payload) => {
     );
     response.data = user;
   } catch (error) {
-    console.error('Error request:', error);
+    console.error("Error request:", error);
     response.statusCode = 500;
-    response.message = 'Failed to create new user';
+    response.message = "Failed to create new user";
     throw error;
   }
   return response;
@@ -39,18 +39,18 @@ userServices.createUser = async (payload) => {
 userServices.updateByCriteria = async (payload) => {
   const response = {
     statusCode: 200,
-    message: 'Succeed to update user',
+    message: "Succeed to update user",
     data: null,
   };
   try {
     const searchCriteria = payload;
     if (
       !searchCriteria ||
-      typeof searchCriteria !== 'object' ||
+      typeof searchCriteria !== "object" ||
       Object.keys(searchCriteria).length === 0
     ) {
       response.statusCode = 422;
-      response.message = 'Invalid search criteria.';
+      response.message = "Invalid search criteria.";
     } else {
       let condition = {};
       let whereCondition = {};
@@ -85,7 +85,7 @@ userServices.updateByCriteria = async (payload) => {
         {}
       );
 
-      console.log('condition', condition);
+      console.log("condition", condition);
 
       // Query
       const users = await UserModel.update(newUserData, condition);
@@ -98,7 +98,7 @@ userServices.updateByCriteria = async (payload) => {
     return response;
   } catch (error) {
     response.statusCode = 500;
-    response.message = 'Failed to update user';
+    response.message = "Failed to update user";
     throw error;
   }
 };
@@ -112,7 +112,7 @@ userServices.generateScript = async (email) => {
     });
     if (user) {
       const { contactId, id } = user;
-      if (!contactId || contactId == '' || contactId == null) {
+      if (!contactId || contactId == "" || contactId == null) {
         const intercomContact = await createIntercomContact(user);
         await UserModel.update(
           { contactId: intercomContact.id },
@@ -138,7 +138,7 @@ userServices.generateScript = async (email) => {
       return null;
     }
   } catch (error) {
-    console.error('Error:', error);
+    console.error("Error:", error);
     return null;
   }
 };
@@ -157,7 +157,7 @@ const createIntercomContact = async (user) => {
 userServices.fetchUserByCriteria = async (payload) => {
   const response = {
     statusCode: 200,
-    message: 'Succeed to get user',
+    message: "Succeed to get user",
     data: null,
     meta: {},
   };
@@ -165,11 +165,11 @@ userServices.fetchUserByCriteria = async (payload) => {
     const searchCriteria = payload;
     if (
       !searchCriteria ||
-      typeof searchCriteria !== 'object' ||
+      typeof searchCriteria !== "object" ||
       Object.keys(searchCriteria).length === 0
     ) {
       response.statusCode = 422;
-      response.message = 'Invalid search criteria.';
+      response.message = "Invalid search criteria.";
     } else {
       let condition = {};
       let whereCondition = {};
@@ -194,9 +194,9 @@ userServices.fetchUserByCriteria = async (payload) => {
 
       // ORDER condition
       let { orderBy, orderDirection } = searchCriteria;
-      if (!orderDirection || !['DESC', 'ASC'].includes(orderDirection))
-        orderDirection = 'DESC';
-      if (!orderBy) orderBy = 'createdAt';
+      if (!orderDirection || !["DESC", "ASC"].includes(orderDirection))
+        orderDirection = "DESC";
+      if (!orderBy) orderBy = "createdAt";
       if (orderBy && orderDirection) {
         const direction = orderDirection.toString().toUpperCase();
         orderCondition.push([`${orderBy}`, `${direction}`]);
@@ -237,9 +237,48 @@ userServices.fetchUserByCriteria = async (payload) => {
     return response;
   } catch (error) {
     response.statusCode = 500;
-    response.message = 'Failed to get user';
+    response.message = "Failed to get user";
     throw error;
   }
 };
 
+userServices.sendMessageRegister = async (email) => {
+  try {
+    const user = await UserModel.findOne({
+      where: {
+        email: email,
+      },
+    });
+    if (user) {
+      await client.messages.create({
+        messageType: "email",
+        subject: "Email confirming successful registration",
+        body: `You have successfully registered with email is : ${email}`,
+        template: "plain",
+        from: {
+          type: "admin",
+          id: "7446513",
+        },
+        to: {
+          type: "user",
+          id: user.contactId,
+        },
+      });
+      // send message in app
+      try {
+        const response = await client.conversations.replyByIdAsAdmin({
+          id: "23",
+          adminId: "7446513",
+          messageType: ReplyToConversationMessageType.NOTE,
+          body: "<b>Bee C</b>",
+          attachmentUrls: ["https://site.org/bebra.jpg"],
+        });
+      } catch (error) {
+        console.error("Error sending message:", error);
+      }
+    }
+  } catch (error) {
+    console.log("error when send message register", error);
+  }
+};
 module.exports = userServices;

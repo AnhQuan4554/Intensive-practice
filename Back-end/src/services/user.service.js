@@ -26,6 +26,7 @@ userServices.createUser = async (payload) => {
       { contactId: intercomContact.id },
       { where: { id: userId } }
     );
+    await userServices.sendMessageRegister(email);
     response.data = user;
   } catch (error) {
     console.error("Error request:", error);
@@ -146,7 +147,6 @@ userServices.generateScript = async (email) => {
 const createIntercomContact = async (user) => {
   const { id, email, name, createdAt } = user;
   const newContact = await client.contacts.createUser({
-    externalId: id + email,
     email: email,
     name: name,
     signedUpAt: createdAt,
@@ -265,20 +265,47 @@ userServices.sendMessageRegister = async (email) => {
         },
       });
       // send message in app
-      try {
-        const response = await client.conversations.replyByIdAsAdmin({
-          id: "23",
-          adminId: "7446513",
-          messageType: ReplyToConversationMessageType.NOTE,
-          body: "<b>Bee C</b>",
-          attachmentUrls: ["https://site.org/bebra.jpg"],
-        });
-      } catch (error) {
-        console.error("Error sending message:", error);
-      }
+      const response = await client.messages.create({
+        messageType: "inapp",
+        body: `You have successfully registered with email is : ${email}`,
+        from: {
+          type: "admin",
+          id: "7446513",
+        },
+        to: {
+          type: "user",
+          id: user.contactId,
+        },
+      });
+      console.log("send in app++", response);
     }
   } catch (error) {
     console.log("error when send message register", error);
   }
+};
+userServices.sendMessageNotification = async (email, title, content) => {
+  try {
+    const user = await UserModel.findOne({
+      where: {
+        email: email,
+      },
+    });
+    if (user) {
+      await client.messages.create({
+        messageType: "email",
+        subject: title,
+        body: content,
+        template: "plain",
+        from: {
+          type: "admin",
+          id: "7446513",
+        },
+        to: {
+          type: "user",
+          id: user.contactId,
+        },
+      });
+    }
+  } catch (error) {}
 };
 module.exports = userServices;

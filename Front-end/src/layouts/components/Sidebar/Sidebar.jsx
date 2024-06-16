@@ -47,6 +47,7 @@ function Sidebar() {
   const handleLightClick = useCallback(
     ({ mode, _save, allowNotify }) => {
       // console.log('Save', _save);
+
       const data = {
         deviceId: 'D2',
         action: mode,

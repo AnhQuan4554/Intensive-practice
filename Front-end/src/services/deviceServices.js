@@ -3,21 +3,10 @@ import authAxios from './authAxios';
 const deviceServices = {};
 
 deviceServices.updateDeviceStatus = async ({ method, token, data, params, path, allowLog }) => {
-  let response;
-  try {
-    response = await sendRequest({
-      method: 'PUT',
-      data,
-      token,
-      path: `/device/update-status${path ? '/' + path : ''}`,
-      params,
-      allowLog,
-    });
-  } catch (error) {
-    console.log('Server Error');
-    throw error;
-  }
-  return response;
+  const url = '/device/update-status';
+  return authAxios.put(url, data, {
+    withCredentials: true,
+  });
 };
 
 deviceServices.getDevice = async ({ method, token, data, params, path, allowLog }) => {

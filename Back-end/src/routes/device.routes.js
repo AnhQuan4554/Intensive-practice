@@ -14,7 +14,11 @@ router.delete(
 // CREATE a new device
 router.post('/create', deviceController.createNew);
 // UPDATE a device status
-router.put('/update-status', deviceController.updateDeviceStatus);
+router.put(
+  '/update-status',
+  authMiddleware.verifyToken,
+  deviceController.updateDeviceStatus
+);
 // UPDATE a device
 router.put('/update', deviceController.updateDevice);
 // GET a device info
